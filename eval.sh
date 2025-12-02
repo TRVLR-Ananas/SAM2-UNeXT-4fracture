@@ -1,4 +1,4 @@
 python eval.py \
---dataset_name "<set your dataset name here>" \
---pred_path "<set your prediction result path here>" \
---gt_path "<set your ground truth path here>"
+--dataset_name "C:\\Users\\dell\\PycharmProjects\\SAM2-UNeXT\\Checkpoint\\SAM2-UNeXT-30.pth" \
+--pred_path "C:\\Users\\dell\\PycharmProjects\\SAM2-UNeXT\\PreResults\\" \
+--gt_path "C:\\Users\\dell\\PycharmProjects\\SAM2-UNeXT\\TestImageMask\\TestMask\\"

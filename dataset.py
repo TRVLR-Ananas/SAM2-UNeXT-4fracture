@@ -9,6 +9,7 @@ from torchvision import transforms
 from PIL import Image
 
 
+#将PIL图像转换为PyTorch张量
 class ToTensor(object):
 
     def __call__(self, data):
@@ -16,6 +17,7 @@ class ToTensor(object):
         return {'image': F.to_tensor(image), 'label': F.to_tensor(label)}
 
 
+# 调整图像和标签到指定尺寸
 class Resize(object):
 
     def __init__(self, size):
@@ -23,10 +25,13 @@ class Resize(object):
 
     def __call__(self, data):
         image, label = data['image'], data['label']
-
+        # 标签resize使用双三次插值
         return {'image': F.resize(image, self.size), 'label': F.resize(label, self.size, interpolation=InterpolationMode.BICUBIC)}
+        # 改为最近邻插值，避免引入虚假的标签值
+        # return {'image': F.resize(image, self.size), 'label': F.resize(label, self.size, interpolation=InterpolationMode.NEAREST)}
 
 
+# 随机水平翻转的数据增强
 class RandomHorizontalFlip(object):
     def __init__(self, p=0.5):
         self.p = p
@@ -40,6 +45,7 @@ class RandomHorizontalFlip(object):
         return {'image': image, 'label': label}
 
 
+# 随机垂直翻转的数据增强
 class RandomVerticalFlip(object):
     def __init__(self, p=0.5):
         self.p = p
@@ -53,6 +59,7 @@ class RandomVerticalFlip(object):
         return {'image': image, 'label': label}
 
 
+# 对图像进行标准化，使用ImageNet的均值和标准差
 class Normalize(object):
     def __init__(self, mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]):
         self.mean = mean
