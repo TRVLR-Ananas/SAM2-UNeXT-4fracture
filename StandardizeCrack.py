@@ -265,7 +265,7 @@ if __name__ == '__main__':
     binary_mask, standardized_mask = process_crack_image(
         image_path,
         target_width=5,  # 目标宽度3像素
-        output_dir="./processed_test"  # 保存结果
+        output_dir="../../AppData/Roaming/JetBrains/PyCharm2025.1/scratches/processed_test"  # 保存结果
     )
 
 

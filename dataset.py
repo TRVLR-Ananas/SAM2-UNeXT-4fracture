@@ -2,7 +2,6 @@ import torchvision.transforms.functional as F
 import numpy as np
 import random
 import os
-from PIL import Image
 from torchvision.transforms import InterpolationMode
 from torch.utils.data import Dataset
 from torchvision import transforms

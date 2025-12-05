@@ -78,7 +78,7 @@ class Up(nn.Module):
         x = self.up(x)
         return self.conv(x)
 
-    
+
 class SAM2UNeXT(nn.Module):
     def __init__(self, checkpoint_path=None, dinov2_path=None) -> None:
         super(SAM2UNeXT, self).__init__()
@@ -123,6 +123,7 @@ class SAM2UNeXT(nn.Module):
         for param in self.dino.parameters():
             param.requires_grad = False
 
+        # 对齐层保持不变
         self.align1 = nn.Conv2d(1024, 144, 1)
         self.align2 = nn.Conv2d(1024, 288, 1)
         self.align3 = nn.Conv2d(1024, 576, 1)
@@ -137,8 +138,7 @@ class SAM2UNeXT(nn.Module):
         self.up2 = Up(256, 128)
         self.up3 = Up(256, 128)
         self.up4 = Up(128, 128)
-        self.head = nn.Conv2d(128, 1, 1)
-        
+
         # 修改最后的head，移除固定的上采样
         self.head = nn.Conv2d(128, 1, 1)
 
@@ -146,14 +146,19 @@ class SAM2UNeXT(nn.Module):
     def forward(self, x):
         input_size = x.shape[-2:]  # 保存原始输入尺寸
 
+        # SAM2特征提取
         x1_s, x2_s, x3_s, x4_s = self.sam(x)
+
+        # DINOv2特征提取
         x_d = self.dino(F.interpolate(x, size=(448, 448), mode='bilinear'))[-1]
 
+        # 对齐DINOv2特征
         x1_d = F.interpolate(self.align1(x_d), size=x1_s.shape[-2:], mode='bilinear')
         x2_d = F.interpolate(self.align2(x_d), size=x2_s.shape[-2:], mode='bilinear')
         x3_d = F.interpolate(self.align3(x_d), size=x3_s.shape[-2:], mode='bilinear')
         x4_d = F.interpolate(self.align4(x_d), size=x4_s.shape[-2:], mode='bilinear')
 
+        # 特征融合
         x1, x2, x3, x4 = torch.cat([x1_s,x1_d], dim=1), torch.cat([x2_s,x2_d], dim=1), torch.cat([x3_s,x3_d], dim=1), torch.cat([x4_s,x4_d], dim=1)
         x1, x2, x3, x4 = self.reduce1(x1), self.reduce2(x2), self.reduce3(x3), self.reduce4(x4)
         x = self.up4(x4)

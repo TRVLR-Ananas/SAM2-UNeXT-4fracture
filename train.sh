@@ -5,6 +5,6 @@ python train.py \
 --train_image_path "C:\\Users\\dell\\PycharmProjects\\SAM2-UNeXT\\TrainImageMask\\TrainImage\\" \
 --train_mask_path "C:\\Users\\dell\\PycharmProjects\\SAM2-UNeXT\\TrainImageMask\\TrainMask\\" \
 --save_path "C:\\Users\\dell\\PycharmProjects\\SAM2-UNeXT\\Checkpoint\\" \
---epoch 100 \
+--epoch 50 \
 --lr 0.0002 \
 --batch_size 1

@@ -42,7 +42,7 @@ for i in range(test_loader.size):
         res = (res * 255).astype(np.uint8)
         # If you want to binarize the prediction results, please uncomment the following three lines. 
         # Note that this action will affect the calculation of evaluation metrics.
-        threshold_value = 0.787
+        threshold_value = 0.788
         res[res >= int(255 * threshold_value)] = 255
         res[res < int(255 * threshold_value)] = 0
         file_name = os.path.basename(name)

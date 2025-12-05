@@ -20,6 +20,7 @@ parser.add_argument("--gt_path", type=str, required=True,
 args = parser.parse_args()
 
 sample_gray = dict(with_adaptive=True, with_dynamic=True)
+
 FMv2 = py_sod_metrics.FmeasureV2(
     metric_handlers={
         "fm": py_sod_metrics.FmeasureHandler(**sample_gray, beta=0.3),
@@ -28,6 +29,14 @@ FMv2 = py_sod_metrics.FmeasureV2(
         "dice": py_sod_metrics.DICEHandler(**sample_gray),
     }
 )
+
+FMv2_bg = py_sod_metrics.FmeasureV2(
+    metric_handlers={
+        "iou_bg": py_sod_metrics.IOUHandler(**sample_gray),
+        "dice_bg": py_sod_metrics.DICEHandler(**sample_gray),
+    }
+)
+
 
 pred_root = args.pred_path
 mask_root = args.gt_path
@@ -45,7 +54,14 @@ for i, mask_name in enumerate(mask_name_list):
     EM.step(pred=pred, gt=mask)
     MAE.step(pred=pred, gt=mask)
     FMv2.step(pred=pred, gt=mask)
-    
+
+    pred_bg=255-pred
+    mask_bg=255-mask
+    FMv2_bg.step(pred=pred_bg, gt=mask_bg)
+
+    # 计算MSIoU
+    MSIOU.step(pred=pred, gt=mask)
+
 
 fm = FM.get_results()["fm"]
 wfm = WFM.get_results()["wfm"]
@@ -53,6 +69,10 @@ sm = SM.get_results()["sm"]
 em = EM.get_results()["em"]
 mae = MAE.get_results()["mae"]
 fmv2 = FMv2.get_results()
+
+fmv2_bg = FMv2_bg.get_results()
+
+iou_ms = MSIOU.get_results()["msiou"]
 
 curr_results = {
     "meandice": fmv2["dice"]["dynamic"].mean(),
@@ -64,6 +84,10 @@ curr_results = {
     "maxFm": fmv2['fm']['dynamic'].max(), # For Remote Sensing Saliency Detection
     "meanEm": em["curve"].mean(),
     "MAE": mae,
+
+    "dice_bg": fmv2_bg["dice_bg"]["dynamic"].mean(),
+    "iou_bg": fmv2_bg["iou_bg"]["dynamic"].mean(),
+    "msiou": iou_ms,
 }
 
 print(args.dataset_name)
@@ -76,3 +100,7 @@ print("F^{mean}_{beta}:", format(curr_results['meanFm'], '.3f'))
 print("F^{max}_{beta}: ", format(curr_results['maxFm'], '.3f'))
 print("E_{phi}:        ", format(curr_results['meanEm'], '.3f'))
 print("MAE:            ", format(curr_results['MAE'], '.3f'))
+
+print("mDice_bg:       ", format(curr_results['dice_bg'], '.3f'))
+print("mIoU_bg:        ", format(curr_results['iou_bg'], '.3f'))
+print("MSIoU:          ", format(curr_results['msiou'], '.3f'))
