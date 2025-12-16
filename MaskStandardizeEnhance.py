@@ -1,6 +1,6 @@
-from EnhanceCrack import batch_enhance_binary_cracks
+from EnhanceFracture import batch_enhance_binary_cracks
 from RandomImage import delete_files_in_folder, moveFile
-from StandardizeCrack import batch_process_crack_images
+from StandardizeFracture import batch_process_crack_images
 
 fileDir_Image = "C:\\Users\\dell\\PycharmProjects\\SAM2-UNeXT\\SourceImageMask\\SourceImage\\"  # Image源图片文件夹路径
 fileDir_Mask = "C:\\Users\\dell\\PycharmProjects\\SAM2-UNeXT\\SourceImageMask\\SourceMask\\"  # Mask源图片文件夹路径

@@ -7,7 +7,7 @@ import torch.nn.functional as F
 from SAM2UNeXT import SAM2UNeXT
 import torchvision.transforms as transforms
 from PIL import Image
-from StandardizeCrack import batch_process_crack_images
+from StandardizeFracture import batch_process_crack_images
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--checkpoint", type=str, required=True,
